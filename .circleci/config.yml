@@ -1,3 +1,7 @@
+# Copyright (c) Masato Urai, Tomoya Otake, Hirokuni Kim
+# Released under the MIT license
+# https://opensource.org/licenses/mit-license.php
+
 version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.10.0
@@ -10,7 +14,6 @@ workflows:
           repo: 'nippo/rails-api'
           tag: 'latest'
 
-      ### ECSへデプロイするジョブ
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
@@ -18,28 +21,3 @@ workflows:
           service-name: 'NIppo-Api-ECS-Service'
           cluster-name: 'Nippo-Api-ECS-EC2'
           container-image-name-updates: 'container=simple-app,image-and-tag=${AWS_ECR_ACCOUNT_URL}/nippo/rails-api:latest'
-
-### E2Eテストの例
-#version: 2
-#jobs:
-#  run_e2e_test:
-#    docker:
-#      - image: circleci/ruby:2.6.5
-#    working_directory: ~/project
-#    steps:
-#      - checkout
-#      - run: bundle install
-#      - run: bundle exec ruby e2e.rb "https://google.com"
-#
-#workflows:
-#  version: 2
-#  monitoring:
-#    triggers:
-#      - schedule:
-#          cron: "* * * * *"
-#          filters:
-#            branches:
-#              only:
-#                - master
-#    jobs:
-#      - run_e2e_test
